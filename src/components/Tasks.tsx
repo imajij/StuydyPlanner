@@ -4,7 +4,7 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import { Subject, Task } from "../types";
 
 export function Tasks() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const subjectFilter = searchParams.get("subject") || "";
   const statusFilter = searchParams.get("status") as Task["status"] | "" || "";
   
@@ -70,13 +70,13 @@ export function Tasks() {
             className="w-full bg-[#1a1a1a] border border-[#fbf0df] rounded p-2 text-white"
             value={subjectFilter}
             onChange={(e) => {
-              const newParams = new URLSearchParams(searchParams.toString());
+              const newParams = new URLSearchParams(searchParams);
               if (e.target.value) {
                 newParams.set("subject", e.target.value);
               } else {
                 newParams.delete("subject");
               }
-              window.history.pushState({}, "", `?${newParams.toString()}`);
+              setSearchParams(newParams);
             }}
           >
             <option value="">All Subjects</option>
@@ -92,13 +92,13 @@ export function Tasks() {
             className="w-full bg-[#1a1a1a] border border-[#fbf0df] rounded p-2 text-white"
             value={statusFilter}
             onChange={(e) => {
-              const newParams = new URLSearchParams(searchParams.toString());
+              const newParams = new URLSearchParams(searchParams);
               if (e.target.value) {
                 newParams.set("status", e.target.value);
               } else {
                 newParams.delete("status");
               }
-              window.history.pushState({}, "", `?${newParams.toString()}`);
+              setSearchParams(newParams);
             }}
           >
             <option value="">All Statuses</option>

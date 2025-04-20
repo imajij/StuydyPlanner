@@ -102,19 +102,29 @@ export function SubjectForm() {
             <label className="block text-sm mb-1">Color</label>
             <div className="flex items-center gap-4">
               <input
-                  type="color"
-                  className="w-12 h-12 rounded border-0 bg-transparent cursor-pointer"
-                  value={formData.color}
-                  onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                  title="Pick a color for the subject"
-                  placeholder="Pick a color"
-              />
+                        type="color"
+                        className="w-12 h-12 rounded border-0 bg-transparent cursor-pointer"
+                        value={formData.color}
+                        onChange={(e) => {
+                          // Ensure color value is valid
+                          const validColor = e.target.value;
+                          setFormData({ ...formData, color: validColor });
+                        }}
+                        title="Pick a color for the subject"
+                        placeholder="Select a color"
+                      />
               <input
                 type="text"
                 className="flex-1 bg-[#2a2a2a] border border-[#fbf0df] rounded p-2 text-white"
                 value={formData.color}
-                onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                onChange={(e) => {
+                  // Only update if it's a valid hex color or empty
+                  const colorValue = e.target.value;
+                  const isValidHex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(colorValue) || colorValue === "#";
+                  if (isValidHex || colorValue === '') {
+                    setFormData({ ...formData, color: colorValue });
+                  }
+                }}
                 placeholder="#RRGGBB"
               />
             </div>

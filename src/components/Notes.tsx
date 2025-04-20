@@ -98,7 +98,9 @@ export function Notes() {
           </div>
           
           <div className="mb-4">
+            <label htmlFor="subjectFilter" className="sr-only">Filter by Subject</label>
             <select 
+              id="subjectFilter"
               className="w-full bg-[#2a2a2a] border border-[#fbf0df] rounded p-2 text-white text-sm"
               value={subjectFilter}
               onChange={(e) => {
@@ -167,6 +169,7 @@ export function Notes() {
                   value={currentNote.title}
                   onChange={(e) => setCurrentNote({...currentNote, title: e.target.value})}
                   onBlur={saveNote}
+                  placeholder="Enter note title"
                 />
                 <div className="flex gap-2">
                   <button
@@ -199,7 +202,9 @@ export function Notes() {
               </div>
               
               <div className="mb-4">
+                <label htmlFor="noteSubject" className="sr-only">Select Subject</label>
                 <select 
+                  id="noteSubject"
                   className="w-full bg-[#2a2a2a] border border-[#fbf0df] rounded p-2 text-white"
                   value={currentNote.subjectId}
                   onChange={(e) => setCurrentNote({...currentNote, subjectId: e.target.value})}
