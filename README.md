@@ -26,18 +26,19 @@ This is a simple study planner application built with React, Vite, and Tailwind 
     npm run build
     # or yarn build or pnpm build
     ```
-    This command type-checks the code and then builds the static assets into the `dist` directory.
+    This command type-checks the code and then builds the static assets into the `public` directory at the project root.
 
 2.  **Preview the production build:**
     ```bash
     npm run preview
     # or yarn preview or pnpm preview
     ```
-    This command serves the contents of the `dist` directory locally, allowing you to test the production build before deployment.
+    This command serves the contents of the build output (`public`) directory locally, allowing you to test the production build before deployment.
 
 ## Project Structure Notes
 
-*   **`public/`**: Contains static assets (like `logo.svg`, `bg.svg`) that are copied directly to the build output root.
+*   **`public/` (Source - Optional):** If you need static assets (like `favicon.ico`, images) that should be copied directly to the build output root *without processing*, place them in a directory named `public` at the project root. Vite handles merging this with the build output.
+*   **`public/` (Output):** The build command generates the final production-ready files into this directory at the project root.
 *   **`src/`**: Contains the main application source code (React components, hooks, styles, etc.).
 *   **`index.html`**: The main HTML entry point (located at the project root).
 *   **`vite.config.ts`**: Vite configuration file.
