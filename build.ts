@@ -1,9 +1,33 @@
 #!/usr/bin/env bun
-import { build, type BuildConfig } from "bun";
-import plugin from "bun-plugin-tailwind";
+import { build } from "bun";
+import tailwindPlugin from "bun-plugin-tailwind";
 import { existsSync } from "fs";
 import { rm } from "fs/promises";
 import path from "path";
+
+// Define the missing BuildConfig interface
+interface BuildConfig {
+  entrypoints?: string[];
+  outdir?: string;
+  plugins?: any[];
+  target?: "browser" | "bun" | "node";
+  minify?: boolean | {
+    whitespace?: boolean;
+    syntax?: boolean;
+    identifiers?: boolean;
+  };
+  sourcemap?: "none" | "linked" | "inline" | "external";
+  format?: "esm" | "cjs" | "iife";
+  splitting?: boolean;
+  packages?: "bundle" | "external";
+  publicPath?: string;
+  env?: "inline" | "disable" | string;
+  conditions?: string[];
+  external?: string[];
+  banner?: string;
+  footer?: string;
+  define?: Record<string, any>;
+}
 
 // Print help text if requested
 if (process.argv.includes("--help") || process.argv.includes("-h")) {
@@ -134,36 +158,26 @@ if (existsSync(outdir)) {
 
 const start = performance.now();
 
-// Scan for all HTML files in the project
-const entrypoints = [...new Bun.Glob("**.html").scanSync("src")]
-  .map(a => path.resolve("src", a))
-  .filter(dir => !dir.includes("node_modules"));
-console.log(`📄 Found ${entrypoints.length} HTML ${entrypoints.length === 1 ? "file" : "files"} to process\n`);
-
-// Build all the HTML files
-const result = await build({
-  entrypoints,
-  outdir,
-  plugins: [plugin],
-  minify: true,
+// Build the project
+await build({
+  entrypoints: ["./src/index.tsx"],
+  outdir: outdir,  // Use the outdir variable instead of hardcoded "./dist"
+  plugins: [tailwindPlugin],
   target: "browser",
-  sourcemap: "linked",
-  define: {
-    "process.env.NODE_ENV": JSON.stringify("production"),
-  },
-  ...cliConfig, // Merge in any CLI-provided options
+  minify: true,
 });
 
-// Print the results
+// Copy index.html to dist folder
+try {
+  const indexPath = path.join(outdir, "index.html");
+  await Bun.write(indexPath, await Bun.file("./public/index.html").text());
+  console.log(`✅ Successfully copied index.html to ${indexPath}`);
+} catch (error) {
+  console.error("❌ Error copying index.html:", error);
+  console.log("⚠️ Make sure ./public/index.html exists");
+}
+
 const end = performance.now();
-
-const outputTable = result.outputs.map(output => ({
-  "File": path.relative(process.cwd(), output.path),
-  "Type": output.kind,
-  "Size": formatFileSize(output.size),
-}));
-
-console.table(outputTable);
 const buildTime = (end - start).toFixed(2);
 
 console.log(`\n✅ Build completed in ${buildTime}ms\n`);
